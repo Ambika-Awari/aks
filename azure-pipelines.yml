@@ -1,0 +1,46 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformInstaller@0
+  displayName: terraform install
+  inputs:
+    terraformVersion: 'latest'
+- task: TerraformTaskV3@3
+  displayName: init
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendServiceArm: 'Visual Studio Enterprise Subscription – MPN(20bac492-273c-4d6e-81a6-c451996ee342)'
+    backendAzureRmResourceGroupName: 'storage001'
+    backendAzureRmStorageAccountName: 'stg1212'
+    backendAzureRmContainerName: 'cont'
+    backendAzureRmKey: 'terraform.tfvars'
+
+- task: TerraformTaskV3@3
+  displayName: validate
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+
+- task: TerraformTaskV3@3
+  displayName: plan
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    environmentServiceNameAzureRM: 'Visual Studio Enterprise Subscription – MPN(20bac492-273c-4d6e-81a6-c451996ee342)'
+
+- task: TerraformTaskV3@3
+  displayName: apply
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: 'Visual Studio Enterprise Subscription – MPN(20bac492-273c-4d6e-81a6-c451996ee342)'
